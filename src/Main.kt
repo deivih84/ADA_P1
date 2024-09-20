@@ -14,11 +14,7 @@ internal object Main {
         val TAMVECTOR = 10000
         var vector: IntArray
         val mediciones = DoubleArray(10)
-
         var tiempo: Long
-
-
-        //        String cadenaCSV = stringACSV(intAStringArray(a));
 
 
         repeat(3) { it0 ->
