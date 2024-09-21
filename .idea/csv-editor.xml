@@ -3,21 +3,14 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\src\algoritmo0.csv">
+        <entry key="\src\mediciones\asignaciones.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\algoritmo1.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\src\algoritmo2.csv">
+        <entry key="\src\mediciones\tiempos.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -25,20 +18,6 @@
           </value>
         </entry>
         <entry key="\src\tiempos\algoritmo0.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\src\tiempos\algoritmo1.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\src\tiempos\algoritmo2.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

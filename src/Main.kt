@@ -1,43 +1,52 @@
 import java.io.FileWriter
 import java.io.IOException
-import java.sql.Time
-import java.time.Duration
-import java.time.Instant
 import java.util.*
-import kotlin.concurrent.timer
 import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
 
 internal object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        val TAMVECTOR = 10000
+        val tamVector = 10000
+        val numRepeticiones = 80
+        val numMediciones = 20
         var vector: IntArray
-        val mediciones = DoubleArray(10)
+        val mediciones = DoubleArray(numMediciones)
         var tiempo: Long
 
 
         repeat(3) { it0 ->
 
-//        for (int nAlgoritmo = 0; nAlgoritmo < 3; nAlgoritmo++) {
-            for (i in 0..9) {
-                vector = IntArray(TAMVECTOR * (i + 1))
-                println(vector.size)
+            for (i in 0..<numMediciones) {
+                vector = IntArray(tamVector * (i + 1))
+                println(tamVector * (i + 1))
 
-                repeat(20) {
-                    aleatorio(vector, TAMVECTOR)
+                repeat(numRepeticiones) {
+                    aleatorio(vector, tamVector * (i + 1))
+
+
+//                    asignaciones += when (it0) {
+//                        0 -> ordena1(vector, tamVector * (i + 1))
+//                    }
+
+
+
+
+
+
+
+
 
                     tiempo = when (it0) {
                         0 -> measureNanoTime {
-                            ordena1(vector, TAMVECTOR)
+                            ordena1(vector, tamVector * (i + 1))
                         }
 
                         1 -> measureNanoTime {
-                            ordena2(vector, TAMVECTOR)
+                            ordena2(vector, tamVector * (i + 1))
                         }
 
                         else -> measureNanoTime {
-                            ordena3(vector, TAMVECTOR)
+                            ordena3(vector, tamVector * (i + 1))
                         }
                     }
 
@@ -45,18 +54,18 @@ internal object Main {
                     mediciones[i] += tiempo.toDouble()
                 }
 
-                mediciones[i] = mediciones[i] / 20
+                mediciones[i] = mediciones[i] / numRepeticiones
 
             }
             println(mediciones.contentToString())
-            escribirCSV(stringACSV(intAStringArray(mediciones)), 0)
+            escribirCSV(stringACSV(intAStringArray(mediciones)))
         }
     }
 
     //    }
-    private fun escribirCSV(cad: String, archivo: Int) {
+    private fun escribirCSV(cad: String) {
         try {
-            val myWriter = FileWriter("src/tiempos/algoritmo$archivo.csv", true)
+            val myWriter = FileWriter("src/mediciones/asignaciones.csv", true)
             myWriter.write(cad + "\n")
             myWriter.close()
 //            println("Todo bn.")
@@ -100,51 +109,61 @@ internal object Main {
     //Instant finish = Instant.now();
     //long timeElapsed = Duration.between(start, finish).toNanos();
     // A
-    var random: Random = Random()
+    private val random: Random = Random()
 
 
     // Alg1
-    fun ordena1(v: IntArray, tam: Int) {
+    private fun ordena1(v: IntArray, tam: Int): Int {
         var i: Int
         var j: Int
         var temp: Int
+        var contadorAsignaciones: Int = 0
+
         i = 1
         j = 2
         while (i < tam) {
             if (v[i - 1] <= v[i]) {
                 i = j
-                j = j + 1
+                j++
             } else {
                 temp = v[i - 1]
                 v[i - 1] = v[i]
                 v[i] = temp
-                i = i - 1
+                contadorAsignaciones += 3
+                i--
                 if (i == 0) {
                     i = 1
                 }
             }
         }
+        return contadorAsignaciones
     }
 
 
     // Alg2
-    fun ordena2(v: IntArray, tam: Int) {
+    private fun ordena2(v: IntArray, tam: Int): Int {
         var k: Int
         val n = tam
+        var contadorAsignaciones: Int = 0
+
         k = n / 2
         while (k >= 1) {
-            f(v, k, n)
+            contadorAsignaciones += f(v, k, n) // Suma las asignaciones de f()
             k--
         }
         k = n
         while (k > 1) {
             g(v, 1, k--)
-            f(v, 1, k)
+            contadorAsignaciones += 3 // Suma las asignaciones de g() (Siempre son 3)
+            contadorAsignaciones += f(v, 1, k) // Suma las asignaciones de f()
         }
+        return contadorAsignaciones
     }
 
-    private fun f(v: IntArray, k: Int, n: Int) {
+    private fun f(v: IntArray, k: Int, n: Int): Int {
         var k = k
+        var contadorAsignaciones: Int = 0
+
         while (2 * k <= n) {
             var j = 2 * k
             if ((j < n) && (v[j - 1] < v[j])) {
@@ -154,11 +173,13 @@ internal object Main {
                 break
             }
             g(v, k, j)
+            contadorAsignaciones += 3
             k = j
         }
+        return contadorAsignaciones
     }
 
-    private fun g(v: IntArray, i: Int, j: Int) {
+    private fun g(v: IntArray, i: Int, j: Int) { // 3 Asignaciones | 0 Comparaciones
         val temp = v[i - 1]
         v[i - 1] = v[j - 1]
         v[j - 1] = temp
@@ -166,31 +187,43 @@ internal object Main {
 
 
     // Alg3
-    fun ordena3(v: IntArray, tam: Int) {
-        val m = h(v, tam)
+    private fun ordena3(v: IntArray, tam: Int): Int {
+        val vectorAuxiliar = h(v, tam) // m es igual al primer elemento del Array
+        val m = vectorAuxiliar[0]
+        var contadorAsignaciones: Int = vectorAuxiliar[1] // el contador esté en la segunda posición del Array
         val c = IntArray(m + 1)
         val w = IntArray(tam)
+
+        // TODO me quedé aquí
+
         for (i in 0 until tam) {
             c[v[i]] = c[v[i]] + 1
+            contadorAsignaciones++
         }
         for (i in 1 until m + 1) {
             c[i] = c[i] + c[i - 1]
+            contadorAsignaciones++
         }
         for (i in tam - 1 downTo 0) {
             w[c[v[i]] - 1] = v[i]
             c[v[i]] = c[v[i]] - 1
+            contadorAsignaciones += 2
         }
         for (i in 0 until tam) {
             v[i] = w[i]
+            contadorAsignaciones++
         }
+        return contadorAsignaciones
     }
 
-    private fun h(v: IntArray, tam: Int): Int {
-        var m = v[0]
+    private fun h(v: IntArray, tam: Int): IntArray { // TODO seguir con el contador de asignaciones
+        var m = intArrayOf(v[0], 0) // Array para pasar el contadorAsignaciones como segundo valor
         var i = 1
+
         while (i < tam) {
-            if (v[i] > m) {
-                m = v[i]
+            if (v[i] > m[0]) {
+                m[0] = v[i]
+                m[1]++ // Incrementar el contador
             }
             i++
         }
@@ -199,7 +232,7 @@ internal object Main {
 
 
     //Fisher Yates
-    fun aleatorio(v: IntArray, tam: Int) {
+    private fun aleatorio(v: IntArray, tam: Int) {
         var i = 0
         while (i < tam) {
             v[i] = i
