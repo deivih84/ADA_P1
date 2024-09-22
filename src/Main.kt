@@ -7,57 +7,53 @@ internal object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         val tamVector = 10000
-        val numRepeticiones = 80
+        val numRepeticiones = 10
         val numMediciones = 20
         var vector: IntArray
-        val mediciones = DoubleArray(numMediciones)
-        var tiempo: Long
+        val mediciones = LongArray(numMediciones)
 
 
         repeat(3) { it0 ->
 
+            mediciones.fill(0) // Resetear las mediciones para el nuevo algoritmo
+
             for (i in 0..<numMediciones) {
                 vector = IntArray(tamVector * (i + 1))
-                println(tamVector * (i + 1))
+                print("${tamVector * (i + 1)}, ")
 
                 repeat(numRepeticiones) {
+
                     aleatorio(vector, tamVector * (i + 1))
 
-
-//                    asignaciones += when (it0) {
-//                        0 -> ordena1(vector, tamVector * (i + 1))
-//                    }
-
-
-
-
-
-
-
-
-
-                    tiempo = when (it0) {
-                        0 -> measureNanoTime {
-                            ordena1(vector, tamVector * (i + 1))
-                        }
-
-                        1 -> measureNanoTime {
-                            ordena2(vector, tamVector * (i + 1))
-                        }
-
-                        else -> measureNanoTime {
-                            ordena3(vector, tamVector * (i + 1))
-                        }
+                    mediciones[i] += when (it0) {
+                        0 -> ordena1(vector, tamVector * (i + 1))
+                        1 -> ordena2(vector, tamVector * (i + 1))
+                        else -> ordena3(vector, tamVector * (i + 1))
                     }
 
 
-                    mediciones[i] += tiempo.toDouble()
+//                    tiempo = when (it0) {
+//                        0 -> measureNanoTime {
+//                            ordena1(vector, tamVector * (i + 1))
+//                        }
+//
+//                        1 -> measureNanoTime {
+//                            ordena2(vector, tamVector * (i + 1))
+//                        }
+//
+//                        else -> measureNanoTime {
+//                            ordena3(vector, tamVector * (i + 1))
+//                        }
+//                    }
+
+
                 }
 
                 mediciones[i] = mediciones[i] / numRepeticiones
 
             }
             println(mediciones.contentToString())
+            println(numRepeticiones)
             escribirCSV(stringACSV(intAStringArray(mediciones)))
         }
     }
@@ -68,7 +64,7 @@ internal object Main {
             val myWriter = FileWriter("src/mediciones/asignaciones.csv", true)
             myWriter.write(cad + "\n")
             myWriter.close()
-//            println("Todo bn.")
+            println("Todo bn.")
         } catch (e: IOException) {
             println("ERROR CATASTRÓFICO.")
             e.printStackTrace()
@@ -76,7 +72,7 @@ internal object Main {
     }
 
 
-    private fun intAStringArray(intArray: DoubleArray): Array<String?> {
+    private fun intAStringArray(intArray: LongArray): Array<String?> {
         val nuevoArray = arrayOfNulls<String>(intArray.size)
 
         for (i in intArray.indices) {
@@ -113,11 +109,11 @@ internal object Main {
 
 
     // Alg1
-    private fun ordena1(v: IntArray, tam: Int): Int {
+    private fun ordena1(v: IntArray, tam: Int): Long {
         var i: Int
         var j: Int
         var temp: Int
-        var contadorAsignaciones: Int = 0
+        var contadorAsignaciones: Long = 0
 
         i = 1
         j = 2
@@ -141,10 +137,10 @@ internal object Main {
 
 
     // Alg2
-    private fun ordena2(v: IntArray, tam: Int): Int {
+    private fun ordena2(v: IntArray, tam: Int): Long {
         var k: Int
         val n = tam
-        var contadorAsignaciones: Int = 0
+        var contadorAsignaciones: Long = 0
 
         k = n / 2
         while (k >= 1) {
@@ -187,14 +183,12 @@ internal object Main {
 
 
     // Alg3
-    private fun ordena3(v: IntArray, tam: Int): Int {
+    private fun ordena3(v: IntArray, tam: Int): Long {
         val vectorAuxiliar = h(v, tam) // m es igual al primer elemento del Array
         val m = vectorAuxiliar[0]
-        var contadorAsignaciones: Int = vectorAuxiliar[1] // el contador esté en la segunda posición del Array
+        var contadorAsignaciones: Long = vectorAuxiliar[1].toLong() // El contador está en la segunda posición del Array
         val c = IntArray(m + 1)
         val w = IntArray(tam)
-
-        // TODO me quedé aquí
 
         for (i in 0 until tam) {
             c[v[i]] = c[v[i]] + 1
