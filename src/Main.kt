@@ -33,6 +33,7 @@ internal object Main {
 //                        else -> ordena3(vector, tamVector * (i + 1))
 //                    }
 
+                    // Bloque para medir tiempo (en kotlin) (en nanosegundos)
                     mediciones[i] = when (it0) {
                         0 -> measureNanoTime {
                             ordena1(vector, tamVector * (i + 1))
