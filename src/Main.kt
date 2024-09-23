@@ -1,5 +1,6 @@
 import java.io.FileWriter
 import java.io.IOException
+import java.sql.Time
 import java.util.*
 import kotlin.system.measureNanoTime
 
@@ -11,6 +12,7 @@ internal object Main {
         val numMediciones = 20
         var vector: IntArray
         val mediciones = LongArray(numMediciones)
+//        var tiempo: Long
 
 
         repeat(3) { it0 ->
@@ -25,27 +27,25 @@ internal object Main {
 
                     aleatorio(vector, tamVector * (i + 1))
 
-                    mediciones[i] += when (it0) {
-                        0 -> ordena1(vector, tamVector * (i + 1))
-                        1 -> ordena2(vector, tamVector * (i + 1))
-                        else -> ordena3(vector, tamVector * (i + 1))
-                    }
-
-
-//                    tiempo = when (it0) {
-//                        0 -> measureNanoTime {
-//                            ordena1(vector, tamVector * (i + 1))
-//                        }
-//
-//                        1 -> measureNanoTime {
-//                            ordena2(vector, tamVector * (i + 1))
-//                        }
-//
-//                        else -> measureNanoTime {
-//                            ordena3(vector, tamVector * (i + 1))
-//                        }
+//                    mediciones[i] += when (it0) {
+//                        0 -> ordena1(vector, tamVector * (i + 1))
+//                        1 -> ordena2(vector, tamVector * (i + 1))
+//                        else -> ordena3(vector, tamVector * (i + 1))
 //                    }
 
+                    mediciones[i] = when (it0) {
+                        0 -> measureNanoTime {
+                            ordena1(vector, tamVector * (i + 1))
+                        }
+
+                        1 -> measureNanoTime {
+                            ordena2(vector, tamVector * (i + 1))
+                        }
+
+                        else -> measureNanoTime {
+                            ordena3(vector, tamVector * (i + 1))
+                        }
+                    }
 
                 }
 
@@ -61,7 +61,7 @@ internal object Main {
     //    }
     private fun escribirCSV(cad: String) {
         try {
-            val myWriter = FileWriter("src/mediciones/asignaciones.csv", true)
+            val myWriter = FileWriter("src/mediciones/tiempos.csv", true)
             myWriter.write(cad + "\n")
             myWriter.close()
             println("Todo bn.")
@@ -96,7 +96,7 @@ internal object Main {
     }
 
 
-    // Medir el tiempo
+    // Medir el tiempo java
     //import java.time.Duration;
     //import java.time.Instant;
     //...
@@ -113,26 +113,26 @@ internal object Main {
         var i: Int
         var j: Int
         var temp: Int
-        var contadorAsignaciones: Long = 0
+        var contadorComparaciones: Long = 0
 
         i = 1
         j = 2
         while (i < tam) {
             if (v[i - 1] <= v[i]) {
+                contadorComparaciones++
                 i = j
                 j++
             } else {
                 temp = v[i - 1]
                 v[i - 1] = v[i]
                 v[i] = temp
-                contadorAsignaciones += 3
                 i--
                 if (i == 0) {
                     i = 1
                 }
             }
         }
-        return contadorAsignaciones
+        return contadorComparaciones
     }
 
 
@@ -140,39 +140,41 @@ internal object Main {
     private fun ordena2(v: IntArray, tam: Int): Long {
         var k: Int
         val n = tam
-        var contadorAsignaciones: Long = 0
+        var contadorComparaciones: Long = 0
 
         k = n / 2
         while (k >= 1) {
-            contadorAsignaciones += f(v, k, n) // Suma las asignaciones de f()
+            contadorComparaciones++
+            contadorComparaciones += f(v, k, n) // Suma las asignaciones de f()
             k--
         }
         k = n
         while (k > 1) {
             g(v, 1, k--)
-            contadorAsignaciones += 3 // Suma las asignaciones de g() (Siempre son 3)
-            contadorAsignaciones += f(v, 1, k) // Suma las asignaciones de f()
+            contadorComparaciones += 0 // Suma las asignaciones de g() (Siempre son 3) (Comparaciones son 0)
+            contadorComparaciones += f(v, 1, k) // Suma las asignaciones de f()
         }
-        return contadorAsignaciones
+        return contadorComparaciones
     }
 
     private fun f(v: IntArray, k: Int, n: Int): Int {
         var k = k
-        var contadorAsignaciones: Int = 0
+        var contadorComparaciones: Int = 0
 
         while (2 * k <= n) {
             var j = 2 * k
             if ((j < n) && (v[j - 1] < v[j])) {
+                contadorComparaciones++
                 j++
             }
             if (v[k - 1] >= v[j - 1]) {
+                contadorComparaciones++
                 break
             }
             g(v, k, j)
-            contadorAsignaciones += 3
             k = j
         }
-        return contadorAsignaciones
+        return contadorComparaciones
     }
 
     private fun g(v: IntArray, i: Int, j: Int) { // 3 Asignaciones | 0 Comparaciones
@@ -186,28 +188,24 @@ internal object Main {
     private fun ordena3(v: IntArray, tam: Int): Long {
         val vectorAuxiliar = h(v, tam) // m es igual al primer elemento del Array
         val m = vectorAuxiliar[0]
-        var contadorAsignaciones: Long = vectorAuxiliar[1].toLong() // El contador está en la segunda posición del Array
+        var contadorComparaciones: Long = vectorAuxiliar[1].toLong() // El contador está en la segunda posición del Array
         val c = IntArray(m + 1)
         val w = IntArray(tam)
 
         for (i in 0 until tam) {
             c[v[i]] = c[v[i]] + 1
-            contadorAsignaciones++
         }
         for (i in 1 until m + 1) {
             c[i] = c[i] + c[i - 1]
-            contadorAsignaciones++
         }
         for (i in tam - 1 downTo 0) {
             w[c[v[i]] - 1] = v[i]
             c[v[i]] = c[v[i]] - 1
-            contadorAsignaciones += 2
         }
         for (i in 0 until tam) {
             v[i] = w[i]
-            contadorAsignaciones++
         }
-        return contadorAsignaciones
+        return contadorComparaciones
     }
 
     private fun h(v: IntArray, tam: Int): IntArray { // TODO seguir con el contador de asignaciones
