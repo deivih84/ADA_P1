@@ -27,26 +27,26 @@ internal object Main {
 
                     aleatorio(vector, tamVector * (i + 1))
 
-//                    mediciones[i] += when (it0) {
-//                        0 -> ordena1(vector, tamVector * (i + 1))
-//                        1 -> ordena2(vector, tamVector * (i + 1))
-//                        else -> ordena3(vector, tamVector * (i + 1))
-//                    }
-
-                    // Bloque para medir tiempo (en kotlin) (en nanosegundos)
-                    mediciones[i] = when (it0) {
-                        0 -> measureNanoTime {
-                            ordena1(vector, tamVector * (i + 1))
-                        }
-
-                        1 -> measureNanoTime {
-                            ordena2(vector, tamVector * (i + 1))
-                        }
-
-                        else -> measureNanoTime {
-                            ordena3(vector, tamVector * (i + 1))
-                        }
+                    mediciones[i] += when (it0) {
+                        0 -> ordena1(vector, tamVector * (i + 1))
+                        1 -> ordena2(vector, tamVector * (i + 1))
+                        else -> ordena3(vector, tamVector * (i + 1))
                     }
+
+//                    // Bloque para medir tiempo (en kotlin) (en nanosegundos)
+//                    mediciones[i] = when (it0) {
+//                        0 -> measureNanoTime {
+//                            ordena1(vector, tamVector * (i + 1))
+//                        }
+//
+//                        1 -> measureNanoTime {
+//                            ordena2(vector, tamVector * (i + 1))
+//                        }
+//
+//                        else -> measureNanoTime {
+//                            ordena3(vector, tamVector * (i + 1))
+//                        }
+//                    }
 
                 }
 
@@ -62,7 +62,7 @@ internal object Main {
     //    }
     private fun escribirCSV(cad: String) {
         try {
-            val myWriter = FileWriter("src/mediciones/tiempos.csv", true)
+            val myWriter = FileWriter("src/mediciones/comparaciones.csv", true)
             myWriter.write(cad + "\n")
             myWriter.close()
             println("Todo bn.")
@@ -119,8 +119,8 @@ internal object Main {
         i = 1
         j = 2
         while (i < tam) {
+            contadorComparaciones++
             if (v[i - 1] <= v[i]) {
-                contadorComparaciones++
                 i = j
                 j++
             } else {
@@ -164,12 +164,12 @@ internal object Main {
 
         while (2 * k <= n) {
             var j = 2 * k
+            contadorComparaciones++
             if ((j < n) && (v[j - 1] < v[j])) {
-                contadorComparaciones++
                 j++
             }
+            contadorComparaciones++
             if (v[k - 1] >= v[j - 1]) {
-                contadorComparaciones++
                 break
             }
             g(v, k, j)
@@ -214,9 +214,9 @@ internal object Main {
         var i = 1
 
         while (i < tam) {
+            m[1]++ // Incrementar el contador
             if (v[i] > m[0]) {
                 m[0] = v[i]
-                m[1]++ // Incrementar el contador
             }
             i++
         }
