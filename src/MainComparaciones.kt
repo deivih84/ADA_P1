@@ -1,15 +1,17 @@
 import java.io.FileWriter
 import java.io.IOException
-import java.sql.Time
 import java.util.*
+import java.sql.Time
 import kotlin.system.measureNanoTime
 
-internal object Main {
+
+internal object MainComparaciones {
+
     @JvmStatic
     fun main(args: Array<String>) {
-        val tamVector = 10000
-        val numRepeticiones = 10
-        val numMediciones = 20
+        val tamVector = 1000000
+        val numRepeticiones = 20 // 10 Veces que se repite un cierto tamaño
+        val numMediciones = 5 // 20 Cantidad de diferentes tamaños probados
         var vector: IntArray
         val mediciones = LongArray(numMediciones)
 //        var tiempo: Long
@@ -28,25 +30,10 @@ internal object Main {
                     aleatorio(vector, tamVector * (i + 1))
 
                     mediciones[i] += when (it0) {
-                        0 -> ordena1(vector, tamVector * (i + 1))
+//                        0 -> ordena1(vector, tamVector * (i + 1))
                         1 -> ordena2(vector, tamVector * (i + 1))
                         else -> ordena3(vector, tamVector * (i + 1))
                     }
-
-//                    // Bloque para medir tiempo (en kotlin) (en nanosegundos)
-//                    mediciones[i] = when (it0) {
-//                        0 -> measureNanoTime {
-//                            ordena1(vector, tamVector * (i + 1))
-//                        }
-//
-//                        1 -> measureNanoTime {
-//                            ordena2(vector, tamVector * (i + 1))
-//                        }
-//
-//                        else -> measureNanoTime {
-//                            ordena3(vector, tamVector * (i + 1))
-//                        }
-//                    }
 
                 }
 
@@ -214,7 +201,7 @@ internal object Main {
         var i = 1
 
         while (i < tam) {
-            m[1]++ // Incrementar el contador
+            m[1]++ // Incrementar el contador de comparaciones
             if (v[i] > m[0]) {
                 m[0] = v[i]
             }
@@ -243,4 +230,3 @@ internal object Main {
         }
     }
 }
-
