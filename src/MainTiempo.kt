@@ -29,19 +29,19 @@ internal object MainTiempo {
 
                     // Bloque para medir tiempo (en kotlin) (en nanosegundos)
                     mediciones[i] = when (it0) {
-//                        0 -> measureNanoTime {
-//                            ordena1(vector, tamVector * (i + 1))
-//                        }
-
-                        1 -> measureNanoTime {
-                            ordena2(vector, tamVector * (i + 1))
+                        0 -> measureNanoTime {
+                            ordena1(vector, tamVector * (i + 1))
                         }
 
-                        else -> 0
+//                        1 -> measureNanoTime {
+//                            ordena2(vector, tamVector * (i + 1))
+//                        }
 
-//                        else -> measureNanoTime {
+//                        2 -> measureNanoTime {
 //                            ordena3(vector, tamVector * (i + 1))
 //                        }
+
+                        else -> 0
                     }
 
                 }
