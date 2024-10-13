@@ -8,7 +8,7 @@ internal object MainTiempo {
     fun main(args: Array<String>) {
         val tamVector = 1000000
         val numRepeticiones = 20 // 10 Veces que se repite un cierto tamaño
-        val numMediciones = 5 // 20 Cantidad de diferentes tamaños probados
+        val numMediciones = 20 // 20 Cantidad de diferentes tamaños probados
         var vector: IntArray
         val mediciones = LongArray(numMediciones)
 //        var tiempo: Long
@@ -29,17 +29,17 @@ internal object MainTiempo {
 
                     // Bloque para medir tiempo (en kotlin) (en nanosegundos)
                     mediciones[i] = when (it0) {
-                        0 -> measureNanoTime {
-                            ordena1(vector, tamVector * (i + 1))
-                        }
+//                        0 -> measureNanoTime {
+//                            ordena1(vector, tamVector * (i + 1))
+//                        }
 
 //                        1 -> measureNanoTime {
 //                            ordena2(vector, tamVector * (i + 1))
 //                        }
 
-//                        2 -> measureNanoTime {
-//                            ordena3(vector, tamVector * (i + 1))
-//                        }
+                        2 -> measureNanoTime {
+                            ordena3(vector, tamVector * (i + 1))
+                        }
 
                         else -> 0
                     }
